@@ -60,7 +60,7 @@ jobs:
               IBSHOP_VERSION=${APP_VERSION} \
               IBSHOP_RELEASE_DATE=${RELEASE_DATE}
           COPY artifacts/api/ ./
-          COPY artifacts/snapshots/ "./docs/newest docs/ibshop_10_products_req_resp/"
+          COPY ["artifacts/snapshots/", "./docs/newest docs/ibshop_10_products_req_resp/"]
           EXPOSE 8080
           ENTRYPOINT ["dotnet", "iBshop.Api.dll"]
           EOF

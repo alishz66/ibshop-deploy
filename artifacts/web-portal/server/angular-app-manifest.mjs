@@ -4,31 +4,99 @@ export default {
   inlineCriticalCss: true,
   baseHref: '/',
   locale: undefined,
-  routes: undefined,
-  entryPointToBrowserMapping: {
-  "libs/cms/feature-shell/src/index.ts": [
-    "chunk-ERQ4OJN2.js",
-    "chunk-KVQVYCUN.js",
-    "chunk-IZNLB3FL.js"
-  ],
-  "libs/cms/feature-home/src/index.ts": [
-    "chunk-U7C7JG7I.js",
-    "chunk-KVQVYCUN.js",
-    "chunk-IZNLB3FL.js"
-  ],
-  "libs/cart/feature-cart/src/index.ts": [
-    "chunk-5LN47VWD.js",
-    "chunk-IZNLB3FL.js"
-  ],
-  "libs/cms/feature-catalog/src/index.ts": [
-    "chunk-R4MHKOL7.js",
-    "chunk-KVQVYCUN.js",
-    "chunk-IZNLB3FL.js"
-  ]
-},
+  routes: [
+  {
+    "renderMode": 0,
+    "route": "/"
+  },
+  {
+    "renderMode": 0,
+    "route": "/cart"
+  },
+  {
+    "renderMode": 0,
+    "route": "/plans"
+  },
+  {
+    "renderMode": 0,
+    "route": "/plans/compare"
+  },
+  {
+    "renderMode": 0,
+    "route": "/plans/*"
+  },
+  {
+    "renderMode": 0,
+    "route": "/funds"
+  },
+  {
+    "renderMode": 0,
+    "route": "/funds/compare"
+  },
+  {
+    "renderMode": 0,
+    "route": "/funds/*"
+  },
+  {
+    "renderMode": 0,
+    "route": "/branches"
+  },
+  {
+    "renderMode": 0,
+    "route": "/products"
+  },
+  {
+    "renderMode": 0,
+    "route": "/products/*"
+  },
+  {
+    "renderMode": 0,
+    "route": "/markets"
+  },
+  {
+    "renderMode": 0,
+    "route": "/markets/*"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/markets",
+    "route": "/market-analysis"
+  },
+  {
+    "renderMode": 0,
+    "route": "/about"
+  },
+  {
+    "renderMode": 0,
+    "route": "/about/*"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/about",
+    "route": "/about-us"
+  },
+  {
+    "renderMode": 0,
+    "route": "/contact-us"
+  },
+  {
+    "renderMode": 0,
+    "route": "/licenses"
+  },
+  {
+    "renderMode": 0,
+    "route": "/404"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/404",
+    "route": "/**"
+  }
+],
+  entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 20490, hash: '5c3a5bb17a167f3fe82024c70db4806ff94ca8f280eb8f869cceaa6242ad2735', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 1503, hash: 'c4cefb7c3fe472152f4df20d6b2e6591dfdedee9580c791eb067bb90cbe147ff', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'styles-YNQ7MHD2.css': {size: 201194, hash: 'hBgUF6lvPl4', text: () => import('./assets-chunks/styles-YNQ7MHD2_css.mjs').then(m => m.default)}
+    'index.csr.html': {size: 20555, hash: '3b2bac478f32050aa87f6bedfd2b622dc124ff99616872ecf32949c3854c24f6', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 1503, hash: '7fde34e94ca7bc8cdf0d5f7ef08af1e59cf5d9d9cc3191d98fd1708855c198ac', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'styles-NDCQO7PL.css': {size: 208347, hash: '1nwCZ42ZKaI', text: () => import('./assets-chunks/styles-NDCQO7PL_css.mjs').then(m => m.default)}
   },
 };

@@ -59,10 +59,9 @@ jobs:
             --build-arg APP_VERSION="${VER}" \
             --build-arg RELEASE_DATE="${RDATE}" \
             -t "${IMAGE_PREFIX}/cms-api:${VER}" \
-            -t "${IMAGE_PREFIX}/cms-api:v0.1.1-20261109.2" \
-            -t "${IMAGE_PREFIX}/cms-api:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/cms-api:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/cms-api:latest" .
-          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
             docker push "${IMAGE_PREFIX}/cms-api:${TAG}"
           done
 
@@ -105,10 +104,9 @@ jobs:
           docker build --provenance=false -f Dockerfile.portal \
             --build-arg APP_VERSION="${VER}" \
             -t "${IMAGE_PREFIX}/web-portal:${VER}" \
-            -t "${IMAGE_PREFIX}/web-portal:v0.1.1-20261109.2" \
-            -t "${IMAGE_PREFIX}/web-portal:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/web-portal:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/web-portal:latest" .
-          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
             docker push "${IMAGE_PREFIX}/web-portal:${TAG}"
           done
 
@@ -144,10 +142,9 @@ jobs:
           EOF
           docker build --provenance=false -f Dockerfile.admin \
             -t "${IMAGE_PREFIX}/admin-panel:${VER}" \
-            -t "${IMAGE_PREFIX}/admin-panel:v0.1.1-20261109.2" \
-            -t "${IMAGE_PREFIX}/admin-panel:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/admin-panel:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/admin-panel:latest" .
-          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
             docker push "${IMAGE_PREFIX}/admin-panel:${TAG}"
           done
 

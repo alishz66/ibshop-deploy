@@ -1,41 +1,35 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# =============================================================================
-# iBshop Enterprise Platform — Automated Linux Deployment & Upgrade Script
-# Supports BOTH Offline (.tar.gz bundle) and Online (ghcr.io) deployments
-# =============================================================================
-
 echo "================================================================"
 echo "  iBshop Enterprise Platform — Linux Docker Deployment Runner"
 echo "================================================================"
 
+LATEST_REPO_VERSION=$(grep '^IBSHOP_VERSION=' .env.example | cut -d'=' -f2 | tr -d '\r\n')
+
 if [ ! -f .env ]; then
   echo "[1/4] Creating .env from .env.example..."
   cp .env.example .env
+else
+  # Auto-upgrade IBSHOP_VERSION in existing .env while preserving custom server settings
+  TARGET_SYNC_VER="${1:-${LATEST_REPO_VERSION}}"
+  sed -i "s/^IBSHOP_VERSION=.*/IBSHOP_VERSION=${TARGET_SYNC_VER}/" .env
 fi
 
-# Load environment variables
 set -a
 source .env
 set +a
 
-TARGET_VERSION="${1:-${IBSHOP_VERSION:-v0.1.1-20261109.2}}"
+TARGET_VERSION="${1:-${IBSHOP_VERSION}}"
 echo "[2/4] Target Release Version: ${TARGET_VERSION}"
 
-# Update IBSHOP_VERSION in .env if passed as CLI argument
-if [ -n "${1:-}" ]; then
-  sed -i "s/^IBSHOP_VERSION=.*/IBSHOP_VERSION=${TARGET_VERSION}/" .env
-fi
-
-# Check if an offline tar.gz bundle exists in current directory
 OFFLINE_ARCHIVE="ibshop-images-${TARGET_VERSION}.tar.gz"
 if [ -f "${OFFLINE_ARCHIVE}" ]; then
   echo "[3/4] Found offline image archive (${OFFLINE_ARCHIVE}). Loading into Docker..."
   docker load -i "${OFFLINE_ARCHIVE}"
 else
-  echo "[3/4] No local ${OFFLINE_ARCHIVE} found. Pulling images from registry..."
-  docker compose pull || echo "Warning: Pull skipped or offline mode; using locally cached images."
+  echo "[3/4] Pulling public images for ${TARGET_VERSION}..."
+  docker compose pull
 fi
 
 echo "[4/4] Starting / Updating iBshop containers..."

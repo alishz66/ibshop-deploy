@@ -20,7 +20,7 @@ set -a
 source .env
 set +a
 
-TARGET_VERSION="${1:-${IBSHOP_VERSION:-v0.1.0-20261109.1}}"
+TARGET_VERSION="${1:-${IBSHOP_VERSION:-v0.1.1-20261109.2}}"
 echo "[2/4] Target Release Version: ${TARGET_VERSION}"
 
 # Update IBSHOP_VERSION in .env if passed as CLI argument

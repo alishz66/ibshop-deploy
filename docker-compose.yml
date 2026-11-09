@@ -1,0 +1,144 @@
+name: ibshop-platform
+
+services:
+  # ===========================================================================
+  # 1. SQL Server 2022 on Linux (Database: iBshopDb with 'cms' & 'cart' schemas)
+  # ===========================================================================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ibshop-sqlserver
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${DB_SA_PASSWORD:-iBshop@StrongPass2026!}"
+      MSSQL_PID: "${MSSQL_EDITION:-Developer}"
+      MSSQL_COLLATION: "Persian_100_CI_AI"
+      TZ: "Asia/Tehran"
+    ports:
+      - "${SQLSERVER_HOST_PORT:-14333}:1433"
+    volumes:
+      - ibshop_sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 25s
+    networks:
+      - ibshop-net
+
+  # ===========================================================================
+  # 2. Redis 7 (Distributed Cache, Rate Limiting & Idempotency)
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: ibshop-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - ibshop_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ibshop-net
+
+  # ===========================================================================
+  # 3. Backend API (.NET 10 Modular Monolith: CMS + Cart)
+  # ===========================================================================
+  cms-api:
+    image: ghcr.io/alishz66/ibshop-cms-api:${IBSHOP_VERSION:-v0.1.0-20261109.1}
+    container_name: ibshop-cms-api
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:8080"
+      TZ: "Asia/Tehran"
+      IBSHOP_VERSION: "${IBSHOP_VERSION:-v0.1.0-20261109.1}"
+      IBSHOP_RELEASE_DATE: "${IBSHOP_RELEASE_DATE:-2026-11-09}"
+      ConnectionStrings__Database: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"
+      ConnectionStrings__DefaultConnection: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"
+      ConnectionStrings__Redis: "${REDIS_CONNECTION_STRING:-redis:6379}"
+      DatabaseInitializer__AutoMigrateOnStartup: "${DB_AUTO_MIGRATE:-true}"
+      DatabaseInitializer__AutoSeedOnStartup: "${DB_AUTO_SEED:-true}"
+      Hosting__EnableSwagger: "${ENABLE_SWAGGER:-true}"
+      Hosting__UseHttpsRedirection: "${USE_HTTPS_REDIRECTION:-false}"
+      Hosting__UseForwardedHeaders: "true"
+      Cors__AllowAnyOrigin: "${CORS_ALLOW_ANY_ORIGIN:-true}"
+      Cors__AllowedOrigins: "${CORS_ALLOWED_ORIGINS:-http://localhost:8080,http://localhost:8081,http://localhost:4200}"
+      Cms__AdminAuth__SecurePolicy: "${COOKIE_SECURE_POLICY:-SameAsRequest}"
+      Cms__AdminAuth__SameSite: "${COOKIE_SAMESITE:-Lax}"
+      Cms__AdminAuth__EnableHeaderFallback: "${ADMIN_ENABLE_HEADER_FALLBACK:-true}"
+      CartCookie__SecurePolicy: "${COOKIE_SECURE_POLICY:-SameAsRequest}"
+      CartCookie__SameSite: "${COOKIE_SAMESITE:-Lax}"
+    volumes:
+      - ./config/appsettings.Production.json:/app/appsettings.Production.json:ro
+    ports:
+      - "${API_DIRECT_PORT:-5215}:8080"
+    networks:
+      - ibshop-net
+
+  # ===========================================================================
+  # 4. Public Web Portal (Angular 22 SSR on Node 22)
+  # ===========================================================================
+  web-portal:
+    image: ghcr.io/alishz66/ibshop-web-portal:${IBSHOP_VERSION:-v0.1.0-20261109.1}
+    container_name: ibshop-web-portal
+    restart: unless-stopped
+    depends_on:
+      - cms-api
+    environment:
+      NODE_ENV: "production"
+      PORT: "4000"
+      TZ: "Asia/Tehran"
+      IBSHOP_VERSION: "${IBSHOP_VERSION:-v0.1.0-20261109.1}"
+    volumes:
+      - ./config/portal-app-config.json:/app/dist/apps/web-portal/browser/app-config.json:ro
+    networks:
+      - ibshop-net
+
+  # ===========================================================================
+  # 5. CMS Admin Panel (Angular 22 SPA on Nginx Alpine)
+  # ===========================================================================
+  admin-panel:
+    image: ghcr.io/alishz66/ibshop-admin-panel:${IBSHOP_VERSION:-v0.1.0-20261109.1}
+    container_name: ibshop-admin-panel
+    restart: unless-stopped
+    depends_on:
+      - cms-api
+    volumes:
+      - ./config/admin-app-config.json:/usr/share/nginx/html/app-config.json:ro
+    networks:
+      - ibshop-net
+
+  # ===========================================================================
+  # 6. Edge Reverse Proxy Gateway (Unified Entrypoint for Portal, Admin & API)
+  # ===========================================================================
+  gateway:
+    image: nginx:1.27-alpine
+    container_name: ibshop-gateway
+    restart: unless-stopped
+    depends_on:
+      - cms-api
+      - web-portal
+      - admin-panel
+    ports:
+      - "${PORTAL_HTTP_PORT:-8080}:80"
+      - "${ADMIN_HTTP_PORT:-8081}:81"
+    volumes:
+      - ./nginx/gateway.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - ibshop-net
+
+volumes:
+  ibshop_sql_data:
+  ibshop_redis_data:
+
+networks:
+  ibshop-net:
+    driver: bridge

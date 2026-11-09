@@ -13,44 +13,35 @@ permissions:
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/alishz66/ibshop-deploy
+  BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
 
 jobs:
-  package-and-publish:
+  publish-api:
+    name: Publish Public Backend API Image
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Release Artifacts Branch
+      - name: Checkout Release Artifacts
         uses: actions/checkout@v4
         with:
           ref: release-artifacts
 
-      - name: Read Version Metadata
-        id: meta
-        run: |
-          VERSION=$(sed -n '1p' version.txt | tr -d '\r\n')
-          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
-          JDATE=$(sed -n '3p' version.txt | tr -d '\r\n')
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "release_date=${RDATE}" >> $GITHUB_OUTPUT
-          echo "jalali_date=${JDATE}" >> $GITHUB_OUTPUT
-          ls -la artifacts
-
-      - name: Log in to GitHub Container Registry (ghcr.io)
+      - name: Log in to ghcr.io
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Push Public Backend API Image
+      - name: Build & Push Public cms-api Image
         run: |
-          VER="${{ steps.meta.outputs.version }}"
-          RDATE="${{ steps.meta.outputs.release_date }}"
+          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
+          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
           cat << 'EOF' > Dockerfile.api
           FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
           LABEL org.opencontainers.image.description="iBshop Enterprise CMS & Cart Backend API (.NET 10)"
           WORKDIR /app
-          RUN apk add --no-cache icu-libs tzdata curl
+          RUN apk add --no-cache icu-libs icu-data-full tzdata curl
           ARG APP_VERSION
           ARG RELEASE_DATE
           ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
@@ -64,18 +55,36 @@ jobs:
           EXPOSE 8080
           ENTRYPOINT ["dotnet", "iBshop.Api.dll"]
           EOF
-          docker build -f Dockerfile.api \
+          docker build --provenance=false -f Dockerfile.api \
             --build-arg APP_VERSION="${VER}" \
             --build-arg RELEASE_DATE="${RDATE}" \
             -t "${IMAGE_PREFIX}/cms-api:${VER}" \
             -t "${IMAGE_PREFIX}/cms-api:v0.1.1-20261109.2" \
             -t "${IMAGE_PREFIX}/cms-api:v0.1.2-20261109.3" \
             -t "${IMAGE_PREFIX}/cms-api:latest" .
-          docker push --all-tags "${IMAGE_PREFIX}/cms-api"
+          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+            docker push "${IMAGE_PREFIX}/cms-api:${TAG}"
+          done
 
-      - name: Build & Push Public Web Portal SSR Image
+  publish-portal:
+    name: Publish Public Web Portal SSR Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Release Artifacts
+        uses: actions/checkout@v4
+        with:
+          ref: release-artifacts
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Public web-portal Image
         run: |
-          VER="${{ steps.meta.outputs.version }}"
+          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
           cat << 'EOF' > Dockerfile.portal
           FROM node:22-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
@@ -93,17 +102,35 @@ jobs:
           EXPOSE 4000
           CMD ["node", "dist/apps/web-portal/server/server.mjs"]
           EOF
-          docker build -f Dockerfile.portal \
+          docker build --provenance=false -f Dockerfile.portal \
             --build-arg APP_VERSION="${VER}" \
             -t "${IMAGE_PREFIX}/web-portal:${VER}" \
             -t "${IMAGE_PREFIX}/web-portal:v0.1.1-20261109.2" \
             -t "${IMAGE_PREFIX}/web-portal:v0.1.2-20261109.3" \
             -t "${IMAGE_PREFIX}/web-portal:latest" .
-          docker push --all-tags "${IMAGE_PREFIX}/web-portal"
+          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+            docker push "${IMAGE_PREFIX}/web-portal:${TAG}"
+          done
 
-      - name: Build & Push Public Admin Panel SPA Image
+  publish-admin:
+    name: Publish Public Admin Panel SPA Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Release Artifacts
+        uses: actions/checkout@v4
+        with:
+          ref: release-artifacts
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Public admin-panel Image
         run: |
-          VER="${{ steps.meta.outputs.version }}"
+          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
           cat << 'EOF' > Dockerfile.admin
           FROM nginx:1.27-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
@@ -115,16 +142,44 @@ jobs:
           EXPOSE 80
           CMD ["nginx", "-g", "daemon off;"]
           EOF
-          docker build -f Dockerfile.admin \
+          docker build --provenance=false -f Dockerfile.admin \
             -t "${IMAGE_PREFIX}/admin-panel:${VER}" \
             -t "${IMAGE_PREFIX}/admin-panel:v0.1.1-20261109.2" \
             -t "${IMAGE_PREFIX}/admin-panel:v0.1.2-20261109.3" \
             -t "${IMAGE_PREFIX}/admin-panel:latest" .
-          docker push --all-tags "${IMAGE_PREFIX}/admin-panel"
+          for TAG in "${VER}" "v0.1.1-20261109.2" "v0.1.2-20261109.3" "latest"; do
+            docker push "${IMAGE_PREFIX}/admin-panel:${TAG}"
+          done
 
-      - name: Create Offline Image Bundle (.tar.gz) & Publish GitHub Release
+  publish-release:
+    name: Verify Anonymous Pull & Publish Offline Release Bundle
+    needs: [publish-api, publish-portal, publish-admin]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Release Artifacts Metadata
+        uses: actions/checkout@v4
+        with:
+          ref: release-artifacts
+          sparse-checkout: |
+            version.txt
+
+      - name: Read Version Metadata
+        id: meta
+        run: |
+          VERSION=$(sed -n '1p' version.txt | tr -d '\r\n')
+          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
+          JDATE=$(sed -n '3p' version.txt | tr -d '\r\n')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "release_date=${RDATE}" >> $GITHUB_OUTPUT
+          echo "jalali_date=${JDATE}" >> $GITHUB_OUTPUT
+
+      - name: Verify Zero-Auth Anonymous Pull & Create Offline Archive
         run: |
           VER="${{ steps.meta.outputs.version }}"
+          docker logout ghcr.io || true
+          docker pull "${IMAGE_PREFIX}/cms-api:${VER}"
+          docker pull "${IMAGE_PREFIX}/web-portal:${VER}"
+          docker pull "${IMAGE_PREFIX}/admin-panel:${VER}"
           docker pull redis:7-alpine
           docker pull nginx:1.27-alpine
           docker save \
@@ -144,9 +199,10 @@ jobs:
           body: |
             ### پکیج استقرار نسخه `${{ steps.meta.outputs.version }}`
             - **تاریخ انتشار:** `${{ steps.meta.outputs.jalali_date }}` (`${{ steps.meta.outputs.release_date }}`)
-            - **روش ۱ (سرور دارای اینترنت — بدون نیاز به لاگین):**
+            - **روش ۱ (سرور دارای اینترنت — کاملاً عمومی و بدون نیاز به لاگین):**
               ```bash
               git pull
+              chmod +x deploy.sh
               ./deploy.sh
               ```
             - **روش ۲ (سرور آفلاین بدون اینترنت):**

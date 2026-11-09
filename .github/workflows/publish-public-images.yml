@@ -1,0 +1,159 @@
+name: Publish Public Docker Images & Offline Release Bundle
+
+on:
+  push:
+    branches:
+      - release-artifacts
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/alishz66/ibshop-deploy
+
+jobs:
+  package-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Release Artifacts Branch
+        uses: actions/checkout@v4
+        with:
+          ref: release-artifacts
+
+      - name: Read Version Metadata
+        id: meta
+        run: |
+          VERSION=$(sed -n '1p' version.txt | tr -d '\r\n')
+          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
+          JDATE=$(sed -n '3p' version.txt | tr -d '\r\n')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "release_date=${RDATE}" >> $GITHUB_OUTPUT
+          echo "jalali_date=${JDATE}" >> $GITHUB_OUTPUT
+          ls -la artifacts
+
+      - name: Log in to GitHub Container Registry (ghcr.io)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Public Backend API Image
+        run: |
+          VER="${{ steps.meta.outputs.version }}"
+          RDATE="${{ steps.meta.outputs.release_date }}"
+          cat << 'EOF' > Dockerfile.api
+          FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+          LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
+          LABEL org.opencontainers.image.description="iBshop Enterprise CMS & Cart Backend API (.NET 10)"
+          WORKDIR /app
+          RUN apk add --no-cache icu-libs tzdata curl
+          ARG APP_VERSION
+          ARG RELEASE_DATE
+          ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+              TZ=Asia/Tehran \
+              ASPNETCORE_URLS=http://+:8080 \
+              ASPNETCORE_ENVIRONMENT=Production \
+              IBSHOP_VERSION=${APP_VERSION} \
+              IBSHOP_RELEASE_DATE=${RELEASE_DATE}
+          COPY artifacts/api/ ./
+          COPY artifacts/snapshots/ "./docs/newest docs/ibshop_10_products_req_resp/"
+          EXPOSE 8080
+          ENTRYPOINT ["dotnet", "iBshop.Api.dll"]
+          EOF
+          docker build -f Dockerfile.api \
+            --build-arg APP_VERSION="${VER}" \
+            --build-arg RELEASE_DATE="${RDATE}" \
+            -t "${IMAGE_PREFIX}/cms-api:${VER}" \
+            -t "${IMAGE_PREFIX}/cms-api:v0.1.1-20261109.2" \
+            -t "${IMAGE_PREFIX}/cms-api:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/cms-api:latest" .
+          docker push --all-tags "${IMAGE_PREFIX}/cms-api"
+
+      - name: Build & Push Public Web Portal SSR Image
+        run: |
+          VER="${{ steps.meta.outputs.version }}"
+          cat << 'EOF' > Dockerfile.portal
+          FROM node:22-alpine
+          LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
+          LABEL org.opencontainers.image.description="iBshop Public Web Portal (Angular 22 SSR)"
+          WORKDIR /app
+          RUN apk add --no-cache tzdata curl
+          ARG APP_VERSION
+          ENV NODE_ENV=production \
+              PORT=4000 \
+              TZ=Asia/Tehran \
+              NG_ALLOWED_HOSTS="*" \
+              SSR_API_URL="http://cms-api:8080" \
+              IBSHOP_VERSION=${APP_VERSION}
+          COPY artifacts/web-portal/ ./dist/apps/web-portal/
+          EXPOSE 4000
+          CMD ["node", "dist/apps/web-portal/server/server.mjs"]
+          EOF
+          docker build -f Dockerfile.portal \
+            --build-arg APP_VERSION="${VER}" \
+            -t "${IMAGE_PREFIX}/web-portal:${VER}" \
+            -t "${IMAGE_PREFIX}/web-portal:v0.1.1-20261109.2" \
+            -t "${IMAGE_PREFIX}/web-portal:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/web-portal:latest" .
+          docker push --all-tags "${IMAGE_PREFIX}/web-portal"
+
+      - name: Build & Push Public Admin Panel SPA Image
+        run: |
+          VER="${{ steps.meta.outputs.version }}"
+          cat << 'EOF' > Dockerfile.admin
+          FROM nginx:1.27-alpine
+          LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
+          LABEL org.opencontainers.image.description="iBshop CMS Admin Panel (Angular 22 SPA)"
+          RUN apk add --no-cache tzdata curl
+          ENV TZ=Asia/Tehran
+          COPY artifacts/admin-spa.conf /etc/nginx/conf.d/default.conf
+          COPY artifacts/admin-panel/ /usr/share/nginx/html/
+          EXPOSE 80
+          CMD ["nginx", "-g", "daemon off;"]
+          EOF
+          docker build -f Dockerfile.admin \
+            -t "${IMAGE_PREFIX}/admin-panel:${VER}" \
+            -t "${IMAGE_PREFIX}/admin-panel:v0.1.1-20261109.2" \
+            -t "${IMAGE_PREFIX}/admin-panel:v0.1.2-20261109.3" \
+            -t "${IMAGE_PREFIX}/admin-panel:latest" .
+          docker push --all-tags "${IMAGE_PREFIX}/admin-panel"
+
+      - name: Create Offline Image Bundle (.tar.gz) & Publish GitHub Release
+        run: |
+          VER="${{ steps.meta.outputs.version }}"
+          docker pull redis:7-alpine
+          docker pull nginx:1.27-alpine
+          docker save \
+            "${IMAGE_PREFIX}/cms-api:${VER}" \
+            "${IMAGE_PREFIX}/web-portal:${VER}" \
+            "${IMAGE_PREFIX}/admin-panel:${VER}" \
+            redis:7-alpine \
+            nginx:1.27-alpine | gzip > "ibshop-images-${VER}.tar.gz"
+          ls -lh "ibshop-images-${VER}.tar.gz"
+
+      - name: Publish Public GitHub Release on ibshop-deploy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.version }}
+          target_commitish: main
+          name: "Release ${{ steps.meta.outputs.version }} (${{ steps.meta.outputs.jalali_date }})"
+          body: |
+            ### پکیج استقرار نسخه `${{ steps.meta.outputs.version }}`
+            - **تاریخ انتشار:** `${{ steps.meta.outputs.jalali_date }}` (`${{ steps.meta.outputs.release_date }}`)
+            - **روش ۱ (سرور دارای اینترنت — بدون نیاز به لاگین):**
+              ```bash
+              git pull
+              ./deploy.sh
+              ```
+            - **روش ۲ (سرور آفلاین بدون اینترنت):**
+              فایل `ibshop-images-${{ steps.meta.outputs.version }}.tar.gz` پیوست‌شده را دانلود کرده و در پوشه پروژه قرار دهید:
+              ```bash
+              chmod +x deploy.sh
+              ./deploy.sh ${{ steps.meta.outputs.version }}
+              ```
+          files: |
+            ibshop-images-${{ steps.meta.outputs.version }}.tar.gz

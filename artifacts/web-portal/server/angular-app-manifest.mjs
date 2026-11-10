@@ -15,6 +15,10 @@ export default {
   },
   {
     "renderMode": 0,
+    "route": "/personality-test"
+  },
+  {
+    "renderMode": 0,
     "route": "/plans"
   },
   {
@@ -48,6 +52,91 @@ export default {
   {
     "renderMode": 0,
     "route": "/products/*"
+  },
+  {
+    "renderMode": 0,
+    "route": "/services"
+  },
+  {
+    "renderMode": 0,
+    "route": "/services/credit"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/credit",
+    "route": "/services/credit-card"
+  },
+  {
+    "renderMode": 0,
+    "route": "/services/brokerage"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/brokerage",
+    "route": "/services/ibtrader"
+  },
+  {
+    "renderMode": 0,
+    "route": "/services/sejam"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/sejam",
+    "route": "/services/sejam-auth"
+  },
+  {
+    "renderMode": 0,
+    "route": "/services/otp"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/otp",
+    "route": "/services/ibshop-otp"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/otp",
+    "route": "/services/otp-activation"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/credit",
+    "route": "/credit"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/credit",
+    "route": "/credit-card"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/brokerage",
+    "route": "/brokerage"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/brokerage",
+    "route": "/ibtrader"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/sejam",
+    "route": "/sejam"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/sejam",
+    "route": "/sejam-auth/landing"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/sejam",
+    "route": "/authentication"
+  },
+  {
+    "renderMode": 0,
+    "redirectTo": "/services/otp",
+    "route": "/otp"
   },
   {
     "renderMode": 0,
@@ -95,8 +184,8 @@ export default {
 ],
   entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 20555, hash: '3b2bac478f32050aa87f6bedfd2b622dc124ff99616872ecf32949c3854c24f6', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 1503, hash: '7fde34e94ca7bc8cdf0d5f7ef08af1e59cf5d9d9cc3191d98fd1708855c198ac', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'styles-NDCQO7PL.css': {size: 208347, hash: '1nwCZ42ZKaI', text: () => import('./assets-chunks/styles-NDCQO7PL_css.mjs').then(m => m.default)}
+    'index.csr.html': {size: 21165, hash: '39fb9b797c207b9bd41cdb7a80cec37236935f1caaa4dce39ce050f5a2e6e48b', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 1503, hash: '3f31315f33f1ff16e0d73946f6179e41cfc490ba89f3d74e75643185086d7222', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'styles-J7RM7TU7.css': {size: 238424, hash: '6t+5fOCNmpY', text: () => import('./assets-chunks/styles-J7RM7TU7_css.mjs').then(m => m.default)}
   },
 };

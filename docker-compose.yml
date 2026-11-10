@@ -49,7 +49,7 @@ services:
   # 3. Backend API (.NET 10 Modular Monolith: CMS + Cart)
   # ===========================================================================
   cms-api:
-    image: ghcr.io/alishz66/ibshop-deploy/cms-api:${IBSHOP_VERSION:-v0.1.4-20261109.5}
+    image: ghcr.io/alishz66/ibshop-deploy/cms-api:${API_VERSION:-v0.1.4-20261109.5}
     container_name: ibshop-cms-api
     restart: unless-stopped
     depends_on:
@@ -61,7 +61,7 @@ services:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
       TZ: "Asia/Tehran"
-      IBSHOP_VERSION: "${IBSHOP_VERSION:-v0.1.4-20261109.5}"
+      IBSHOP_VERSION: "${API_VERSION:-v0.1.4-20261109.5}"
       IBSHOP_RELEASE_DATE: "${IBSHOP_RELEASE_DATE:-2026-11-09}"
       ConnectionStrings__Database: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"
       ConnectionStrings__DefaultConnection: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"
@@ -89,7 +89,7 @@ services:
   # 4. Public Web Portal (Angular 22 SSR on Node 22)
   # ===========================================================================
   web-portal:
-    image: ghcr.io/alishz66/ibshop-deploy/web-portal:${IBSHOP_VERSION:-v0.1.4-20261109.5}
+    image: ghcr.io/alishz66/ibshop-deploy/web-portal:${PORTAL_VERSION:-v0.1.5-20261110.1}
     container_name: ibshop-web-portal
     restart: unless-stopped
     depends_on:
@@ -100,7 +100,7 @@ services:
       TZ: "Asia/Tehran"
       NG_ALLOWED_HOSTS: "${NG_ALLOWED_HOSTS:-*}"
       SSR_API_URL: "${SSR_API_URL:-http://cms-api:8080}"
-      IBSHOP_VERSION: "${IBSHOP_VERSION:-v0.1.4-20261109.5}"
+      IBSHOP_VERSION: "${PORTAL_VERSION:-v0.1.5-20261110.1}"
     volumes:
       - ./config/portal-app-config.json:/app/dist/apps/web-portal/browser/app-config.json:ro
     networks:
@@ -110,7 +110,7 @@ services:
   # 5. CMS Admin Panel (Angular 22 SPA on Nginx Alpine)
   # ===========================================================================
   admin-panel:
-    image: ghcr.io/alishz66/ibshop-deploy/admin-panel:${IBSHOP_VERSION:-v0.1.4-20261109.5}
+    image: ghcr.io/alishz66/ibshop-deploy/admin-panel:${ADMIN_VERSION:-v0.1.5-20261110.1}
     container_name: ibshop-admin-panel
     restart: unless-stopped
     depends_on:

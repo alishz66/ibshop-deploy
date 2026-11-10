@@ -16,8 +16,54 @@ env:
   BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
 
 jobs:
+  detect:
+    name: Detect Changed Services & Version Tags
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      release_date: ${{ steps.meta.outputs.release_date }}
+      jalali_date: ${{ steps.meta.outputs.jalali_date }}
+      api_version: ${{ steps.meta.outputs.api_version }}
+      portal_version: ${{ steps.meta.outputs.portal_version }}
+      admin_version: ${{ steps.meta.outputs.admin_version }}
+      build_api: ${{ steps.meta.outputs.build_api }}
+      build_portal: ${{ steps.meta.outputs.build_portal }}
+      build_admin: ${{ steps.meta.outputs.build_admin }}
+    steps:
+      - name: Checkout Release Metadata
+        uses: actions/checkout@v4
+        with:
+          ref: release-artifacts
+          sparse-checkout: |
+            version.txt
+
+      - name: Parse Per-Service Version Metadata
+        id: meta
+        run: |
+          cat version.txt
+          VERSION=$(sed -n '1p' version.txt | tr -d '\r\n')
+          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
+          JDATE=$(sed -n '3p' version.txt | tr -d '\r\n')
+          API_VER=$(sed -n '4p' version.txt | cut -d'|' -f1 | tr -d '\r\n')
+          BUILD_API=$(sed -n '4p' version.txt | cut -d'|' -f2 | tr -d '\r\n')
+          PORTAL_VER=$(sed -n '5p' version.txt | cut -d'|' -f1 | tr -d '\r\n')
+          BUILD_PORTAL=$(sed -n '5p' version.txt | cut -d'|' -f2 | tr -d '\r\n')
+          ADMIN_VER=$(sed -n '6p' version.txt | cut -d'|' -f1 | tr -d '\r\n')
+          BUILD_ADMIN=$(sed -n '6p' version.txt | cut -d'|' -f2 | tr -d '\r\n')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "release_date=${RDATE}" >> $GITHUB_OUTPUT
+          echo "jalali_date=${JDATE}" >> $GITHUB_OUTPUT
+          echo "api_version=${API_VER:-$VERSION}" >> $GITHUB_OUTPUT
+          echo "portal_version=${PORTAL_VER:-$VERSION}" >> $GITHUB_OUTPUT
+          echo "admin_version=${ADMIN_VER:-$VERSION}" >> $GITHUB_OUTPUT
+          echo "build_api=${BUILD_API:-true}" >> $GITHUB_OUTPUT
+          echo "build_portal=${BUILD_PORTAL:-true}" >> $GITHUB_OUTPUT
+          echo "build_admin=${BUILD_ADMIN:-true}" >> $GITHUB_OUTPUT
+
   publish-api:
     name: Publish Public Backend API Image
+    needs: detect
+    if: needs.detect.outputs.build_api == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Release Artifacts
@@ -34,8 +80,8 @@ jobs:
 
       - name: Build & Push Public cms-api Image
         run: |
-          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
-          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
+          VER="${{ needs.detect.outputs.api_version }}"
+          RDATE="${{ needs.detect.outputs.release_date }}"
           cat << 'EOF' > Dockerfile.api
           FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
@@ -59,14 +105,15 @@ jobs:
             --build-arg APP_VERSION="${VER}" \
             --build-arg RELEASE_DATE="${RDATE}" \
             -t "${IMAGE_PREFIX}/cms-api:${VER}" \
-            -t "${IMAGE_PREFIX}/cms-api:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/cms-api:latest" .
-          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
+          for TAG in "${VER}" "latest"; do
             docker push "${IMAGE_PREFIX}/cms-api:${TAG}"
           done
 
   publish-portal:
     name: Publish Public Web Portal SSR Image
+    needs: detect
+    if: needs.detect.outputs.build_portal == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Release Artifacts
@@ -83,7 +130,7 @@ jobs:
 
       - name: Build & Push Public web-portal Image
         run: |
-          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
+          VER="${{ needs.detect.outputs.portal_version }}"
           cat << 'EOF' > Dockerfile.portal
           FROM node:22-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
@@ -104,14 +151,15 @@ jobs:
           docker build --provenance=false -f Dockerfile.portal \
             --build-arg APP_VERSION="${VER}" \
             -t "${IMAGE_PREFIX}/web-portal:${VER}" \
-            -t "${IMAGE_PREFIX}/web-portal:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/web-portal:latest" .
-          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
+          for TAG in "${VER}" "latest"; do
             docker push "${IMAGE_PREFIX}/web-portal:${TAG}"
           done
 
   publish-admin:
     name: Publish Public Admin Panel SPA Image
+    needs: detect
+    if: needs.detect.outputs.build_admin == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Release Artifacts
@@ -128,7 +176,7 @@ jobs:
 
       - name: Build & Push Public admin-panel Image
         run: |
-          VER=$(sed -n '1p' version.txt | tr -d '\r\n')
+          VER="${{ needs.detect.outputs.admin_version }}"
           cat << 'EOF' > Dockerfile.admin
           FROM nginx:1.27-alpine
           LABEL org.opencontainers.image.source="https://github.com/alishz66/ibshop-deploy"
@@ -142,47 +190,38 @@ jobs:
           EOF
           docker build --provenance=false -f Dockerfile.admin \
             -t "${IMAGE_PREFIX}/admin-panel:${VER}" \
-            -t "${IMAGE_PREFIX}/admin-panel:v0.1.3-20261109.4" \
             -t "${IMAGE_PREFIX}/admin-panel:latest" .
-          for TAG in "${VER}" "v0.1.3-20261109.4" "latest"; do
+          for TAG in "${VER}" "latest"; do
             docker push "${IMAGE_PREFIX}/admin-panel:${TAG}"
           done
 
   publish-release:
     name: Verify Anonymous Pull & Publish Offline Release Bundle
-    needs: [publish-api, publish-portal, publish-admin]
+    needs: [detect, publish-api, publish-portal, publish-admin]
+    if: |
+      always() &&
+      needs.detect.result == 'success' &&
+      (needs.publish-api.result == 'success' || needs.publish-api.result == 'skipped') &&
+      (needs.publish-portal.result == 'success' || needs.publish-portal.result == 'skipped') &&
+      (needs.publish-admin.result == 'success' || needs.publish-admin.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Release Artifacts Metadata
-        uses: actions/checkout@v4
-        with:
-          ref: release-artifacts
-          sparse-checkout: |
-            version.txt
-
-      - name: Read Version Metadata
-        id: meta
-        run: |
-          VERSION=$(sed -n '1p' version.txt | tr -d '\r\n')
-          RDATE=$(sed -n '2p' version.txt | tr -d '\r\n')
-          JDATE=$(sed -n '3p' version.txt | tr -d '\r\n')
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "release_date=${RDATE}" >> $GITHUB_OUTPUT
-          echo "jalali_date=${JDATE}" >> $GITHUB_OUTPUT
-
       - name: Verify Zero-Auth Anonymous Pull & Create Offline Archive
         run: |
-          VER="${{ steps.meta.outputs.version }}"
+          VER="${{ needs.detect.outputs.version }}"
+          API_VER="${{ needs.detect.outputs.api_version }}"
+          PORTAL_VER="${{ needs.detect.outputs.portal_version }}"
+          ADMIN_VER="${{ needs.detect.outputs.admin_version }}"
           docker logout ghcr.io || true
-          docker pull "${IMAGE_PREFIX}/cms-api:${VER}"
-          docker pull "${IMAGE_PREFIX}/web-portal:${VER}"
-          docker pull "${IMAGE_PREFIX}/admin-panel:${VER}"
+          docker pull "${IMAGE_PREFIX}/cms-api:${API_VER}"
+          docker pull "${IMAGE_PREFIX}/web-portal:${PORTAL_VER}"
+          docker pull "${IMAGE_PREFIX}/admin-panel:${ADMIN_VER}"
           docker pull redis:7-alpine
           docker pull nginx:1.27-alpine
           docker save \
-            "${IMAGE_PREFIX}/cms-api:${VER}" \
-            "${IMAGE_PREFIX}/web-portal:${VER}" \
-            "${IMAGE_PREFIX}/admin-panel:${VER}" \
+            "${IMAGE_PREFIX}/cms-api:${API_VER}" \
+            "${IMAGE_PREFIX}/web-portal:${PORTAL_VER}" \
+            "${IMAGE_PREFIX}/admin-panel:${ADMIN_VER}" \
             redis:7-alpine \
             nginx:1.27-alpine | gzip > "ibshop-images-${VER}.tar.gz"
           ls -lh "ibshop-images-${VER}.tar.gz"
@@ -190,23 +229,19 @@ jobs:
       - name: Publish Public GitHub Release on ibshop-deploy
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.meta.outputs.version }}
+          tag_name: ${{ needs.detect.outputs.version }}
           target_commitish: main
-          name: "Release ${{ steps.meta.outputs.version }} (${{ steps.meta.outputs.jalali_date }})"
+          name: "Release ${{ needs.detect.outputs.version }} (${{ needs.detect.outputs.jalali_date }})"
           body: |
-            ### پکیج استقرار نسخه `${{ steps.meta.outputs.version }}`
-            - **تاریخ انتشار:** `${{ steps.meta.outputs.jalali_date }}` (`${{ steps.meta.outputs.release_date }}`)
-            - **روش ۱ (سرور دارای اینترنت — کاملاً عمومی و بدون نیاز به لاگین):**
+            ### پکیج استقرار نسخه `${{ needs.detect.outputs.version }}`
+            - **تاریخ انتشار:** `${{ needs.detect.outputs.jalali_date }}` (`${{ needs.detect.outputs.release_date }}`)
+            - **تگ‌های فعال هر سرویس در این ریلیز:**
+              - **Backend API (`cms-api`):** `${{ needs.detect.outputs.api_version }}` (تغییر در این نسخه: `${{ needs.detect.outputs.build_api }}`)
+              - **Web Portal (`web-portal`):** `${{ needs.detect.outputs.portal_version }}` (تغییر در این نسخه: `${{ needs.detect.outputs.build_portal }}`)
+              - **Admin Panel (`admin-panel`):** `${{ needs.detect.outputs.admin_version }}` (تغییر در این نسخه: `${{ needs.detect.outputs.build_admin }}`)
+            - **بروزرسانی سریع روی سرور لینوکس (فقط سرویس تغییرکرده آپدیت می‌شود):**
               ```bash
-              git pull
-              chmod +x deploy.sh
-              ./deploy.sh
-              ```
-            - **روش ۲ (سرور آفلاین بدون اینترنت):**
-              فایل `ibshop-images-${{ steps.meta.outputs.version }}.tar.gz` پیوست‌شده را دانلود کرده و در پوشه پروژه قرار دهید:
-              ```bash
-              chmod +x deploy.sh
-              ./deploy.sh ${{ steps.meta.outputs.version }}
+              git pull && ./deploy.sh
               ```
           files: |
-            ibshop-images-${{ steps.meta.outputs.version }}.tar.gz
+            ibshop-images-${{ needs.detect.outputs.version }}.tar.gz

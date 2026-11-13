@@ -49,7 +49,7 @@ services:
   # 3. Backend API (.NET 10 Modular Monolith: CMS + Cart)
   # ===========================================================================
   cms-api:
-    image: ghcr.io/alishz66/ibshop-deploy/cms-api:${API_VERSION:-v0.1.9-20261113.1}
+    image: ghcr.io/alishz66/ibshop-deploy/cms-api:${API_VERSION:-v0.1.11-20261114.1}
     container_name: ibshop-cms-api
     restart: unless-stopped
     depends_on:
@@ -61,7 +61,7 @@ services:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
       TZ: "Asia/Tehran"
-      IBSHOP_VERSION: "${API_VERSION:-v0.1.9-20261113.1}"
+      IBSHOP_VERSION: "${API_VERSION:-v0.1.11-20261114.1}"
       IBSHOP_RELEASE_DATE: "${IBSHOP_RELEASE_DATE:-2026-11-09}"
       ConnectionStrings__Database: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"
       ConnectionStrings__DefaultConnection: "${DB_CONNECTION_STRING:-Server=sqlserver,1433;Database=iBshopDb;User Id=sa;Password=iBshop@StrongPass2026!;TrustServerCertificate=True;MultipleActiveResultSets=True}"

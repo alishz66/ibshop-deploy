@@ -93,7 +93,7 @@ services:
   # 4. Public Web Portal (Angular 22 SSR on Node 22)
   # ===========================================================================
   web-portal:
-    image: ghcr.io/alishz66/ibshop-deploy/web-portal:${PORTAL_VERSION:-v0.1.9-20261113.1}
+    image: ghcr.io/alishz66/ibshop-deploy/web-portal:${PORTAL_VERSION:-v0.1.10-20261113.2}
     container_name: ibshop-web-portal
     restart: unless-stopped
     depends_on:
@@ -104,7 +104,7 @@ services:
       TZ: "Asia/Tehran"
       NG_ALLOWED_HOSTS: "${NG_ALLOWED_HOSTS:-*}"
       SSR_API_URL: "${SSR_API_URL:-http://cms-api:8080}"
-      IBSHOP_VERSION: "${PORTAL_VERSION:-v0.1.9-20261113.1}"
+      IBSHOP_VERSION: "${PORTAL_VERSION:-v0.1.10-20261113.2}"
     volumes:
       - ./config/portal-app-config.json:/app/dist/apps/web-portal/browser/app-config.json:ro
     networks:

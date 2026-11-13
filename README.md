@@ -58,3 +58,31 @@ docker compose up -d
 ```text
 http://<SERVER_IP>:8080/api/system/version
 ```
+
+---
+
+## ۵. چک‌لیست استقرار، فایروال و اتصال به سرویس OTP و Captcha (`services.ibshop.ir`)
+
+ویژه مسئول استقرار و مهندس دواپس سرور لینوکس برای انتشار نسخه‌های شامل `BE-OTP-01` و `INFRA-01`:
+
+1. **بیلد مجدد و انتشار هر دو ایمیج (`cms-api` و `web-portal`):**
+   * در این به‌روزرسانی هم کدهای بک‌اند (`cms-api`) جهت افزودن کلاینت تدافعی BFF Proxy و اندپوینت Captcha، و هم کدهای فرانت‌اند (`web-portal`) جهت نمایش چالش کپچا تغییر یافته‌اند.
+   * هر دو ایمیج باید در ورک‌فلوهای CI/CD (`release-demo-docker.yml` و `publish-public-images.yml`) بیلد مجدد و منتشر شوند. (ایمیج `admin-panel` بدون تغییر است).
+
+2. **دسترسی شبکه و فایروال سرور (Firewall / Outbound Access):**
+   * کانتینر `ibshop-cms-api` برای دریافت چالش کپچا (`api/v2/infrastructure/Captcha`)، ارسال پیامک OTP (`api/v3/otp/generate`) و تایید کد (`api/v3/otp/confirm`) نیاز به **دسترسی خروجی HTTPS (پورت ۴۴۳)** به دامنه `services.ibshop.ir` دارد.
+   * اطمینان حاصل کنید فایروال سرور (UFW, iptables یا Security Group) ترافیک خروجی پورت ۴۴۳ به این دامنه را مسدود نکرده باشد.
+
+3. **سرورهای ایزوله و شبکه‌های داخلی (Air-Gapped & Custom Gateways):**
+   * مقادیر فایل `.env` بر مقادیر `config/appsettings.Production.json` اولویت دارند.
+   * اگر سرور در یک شبکه کاملاً بسته (Air-Gapped) قرار دارد یا سرویس OTP از طریق یک آدرس/IP داخلی دیگر دردسترس است، **بدون نیاز به ری‌بیلد ایمیج داکر**، صرفاً متغیر `OTP_SERVICE_BASE_URL` را در فایل `.env` تنظیم کرده و دستور `docker compose up -d` را اجرا فرمایید:
+     ```bash
+     OTP_SERVICE_BASE_URL=https://internal-gateway.local/infrastructure
+     ```
+
+4. **بازگشت سریع به حالت آزمایشی آفلاین (Instant Offline Demo Fallback):**
+   * در صورتی که در محیط تست دمو دسترسی به سرور پیامک یا اینترنت وجود نداشته باشد، با قرار دادن متغیر زیر در فایل `.env` سیستم فوراً و بدون نیاز به ری‌بیلد به شبیه‌ساز محلی لاگ سوئیچ می‌کند:
+     ```bash
+     OTP_USE_EXTERNAL_PROVIDER=false
+     ```
+

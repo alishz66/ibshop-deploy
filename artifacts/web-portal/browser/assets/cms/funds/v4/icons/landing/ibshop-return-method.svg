@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none" role="img" aria-label="نحوه کسب بازده سرمایه‌گذاری">
+  <g stroke="#191F59" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M31 190H225"/>
+    <rect x="52" y="142" width="31" height="48" rx="4" fill="#76A9A5"/>
+    <rect x="100" y="114" width="31" height="76" rx="4" fill="#76A9A5"/>
+    <rect x="148" y="85" width="31" height="105" rx="4" fill="#76A9A5"/>
+    <path d="M47 112L90 86L121 99L196 43"/>
+    <path d="M169 43H196V70"/>
+    <circle cx="194" cy="165" r="36" fill="white"/>
+    <path d="M181 155H207M181 175H207M186 146V184M202 146V184" stroke="#76A9A5" stroke-width="5"/>
+    <path d="M28 55H81M28 55L40 43M28 55L40 67" stroke="#76A9A5"/>
+  </g>
+</svg>

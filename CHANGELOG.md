@@ -4,6 +4,7 @@
 
 | شماره نسخه (Version Tag) | تاریخ شمسی | تاریخ میلادی و ساعت | توضیحات نسخه |
 | :--- | :---: | :---: | :--- |
+| **`v0.1.13-20261115.2`** | `1405/08/24` | `2026-11-15 12:53` | V4 Full Release: Phases 13-16 (Credit, Plans, Products) + 5 Urgent Demo Hotfixes (Donut Asset Labels, Dynamic Cradle Curve, Mehran Studio Portrait & Reviews, Deduplicated Funds Menu, 1:1 Figma 3D Safe Vaults) (API: `v0.1.13-20261115.2`, Portal: `v0.1.13-20261115.2`, Admin: `v0.1.13-20261115.2`) |
 | **`v0.1.12-20261115.1`** | `1405/08/24` | `2026-11-15 08:59` | بروزرسانی جامع نگارش ۴ (فازهای ۱ تا ۱۲): هیرو ویدئویی، طرح‌ها، صندوق‌ها، خدمات، منوی آکادمی، تیکر بازار و رفع خطای SslStream (API: `v0.1.12-20261115.1`, Portal: `v0.1.12-20261115.1`, Admin: `v0.1.12-20261115.1`) |
 | **`v0.1.11-20261114.1`** | `1405/08/23` | `2026-11-14 01:03` | enhance OTP service resilience and smart upstream error mapping (API: `v0.1.11-20261114.1`, Portal: `v0.1.10-20261113.2`, Admin: `v0.1.4-20261109.5`) |
 | **`v0.1.10-20261113.2`** | `1405/08/22` | `2026-11-13 21:25` | fix plan card flip back-face light gradient (API: `v0.1.9-20261113.1`, Portal: `v0.1.10-20261113.2`, Admin: `v0.1.4-20261109.5`) |

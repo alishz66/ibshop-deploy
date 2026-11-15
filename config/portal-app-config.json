@@ -1,8 +1,8 @@
 {
   "apiUrl": "/",
   "timeout": 30000,
-  "Version": "v0.1.10-20261113.2",
-  "ReleaseDate": "2026-11-13 (1405/08/22)",
+  "Version": "v0.1.12-20261115.1",
+  "ReleaseDate": "2026-11-15 (1405/08/24)",
   "environment": "Demo",
   "features": {
     "enableMockData": false,

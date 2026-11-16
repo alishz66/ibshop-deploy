@@ -1,7 +1,7 @@
 {
   "apiUrl": "/",
   "timeout": 30000,
-  "Version": "v0.1.13-20261115.2",
+  "Version": "v0.1.14-20261115.3",
   "ReleaseDate": "2026-11-15 (1405/08/24)",
   "environment": "Demo",
   "features": {

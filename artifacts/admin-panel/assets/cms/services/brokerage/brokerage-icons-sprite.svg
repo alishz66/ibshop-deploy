@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Hero Stat 1: Users / Activity -->
+  <symbol id="icon-stat-users" viewBox="0 0 24 24" fill="none">
+    <circle cx="9.5" cy="7.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M3.5 19.5V17C3.5 14.7 5.4 12.8 7.7 12.8H11.3C13.6 12.8 15.5 14.7 15.5 17V19.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M15 4.4C16.7 4.9 18 6.4 18 8.2C18 10 16.7 11.5 15 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M17.2 13C19.2 13.5 20.6 15.3 20.6 17.4V19.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Hero Stat 2: Chart / Registered Capital -->
+  <symbol id="icon-stat-chart" viewBox="0 0 24 24" fill="none">
+    <path d="M6 14.2V10.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <path d="M10.5 12.8V6.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <path d="M15 11.2V3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <path d="M5.2 19.5L10.2 14.5L13.5 17.6L19.5 11.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M15.8 11.6H19.5V15.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Hero Stat 3: Branches / Building -->
+  <symbol id="icon-stat-building" viewBox="0 0 24 24" fill="none">
+    <rect x="3.8" y="11.2" width="6.8" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+    <path d="M7.5 11.2V6.6C7.5 6.1 7.8 5.7 8.3 5.5L15.2 3.7C15.8 3.5 16.4 4 16.4 4.6V8.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="12.8" y="8.2" width="7.4" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+    <path d="M15.4 12H17.6M15.4 15H17.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </symbol>
+
+  <!-- Card 1: Shield Check (معامله اوراق بهادار) -->
+  <symbol id="icon-card-shield-check" viewBox="0 0 24 24" fill="none">
+    <path d="M12 3L4.5 6.2V11.4C4.5 16.2 7.7 20.5 12 21.8C16.3 20.5 19.5 16.2 19.5 11.4V6.2L12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M9 12.2L11.1 14.3L15.2 10.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card 2: Lightning Bolt (مشاوره پذیرش و عرضه شرکت‌ها در بورس) -->
+  <symbol id="icon-card-bolt" viewBox="0 0 24 24" fill="none">
+    <path d="M13 3L5.5 13.5H12L11 21L18.5 10.5H12L13 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card 3: Refresh / Portfolio Management (مشاوره سرمایه‌گذاری و سبدگردانی) -->
+  <symbol id="icon-card-refresh" viewBox="0 0 24 24" fill="none">
+    <path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5V9H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M4 13A8.1 8.1 0 0 0 19.5 15M20 19V15H16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card 4: Trend Up (تعهد پذیره نویسی) -->
+  <symbol id="icon-card-trend-up" viewBox="0 0 24 24" fill="none">
+    <path d="M3 17L9 11L13 15L21 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M15 7H21V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card 5: Clock (بازارگردانی) -->
+  <symbol id="icon-card-clock" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M12 7.5V12L15 13.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card 6: Data Panel (پردازش اطلاعات مالی) -->
+  <symbol id="icon-card-data-panel" viewBox="0 0 24 24" fill="none">
+    <rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M3.5 9.5H20.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M7.5 14H11.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+  </symbol>
+</svg>

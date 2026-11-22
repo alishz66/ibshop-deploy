@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Hero Stat 1 (Rightmost): Person with Shopping/Credit Bag (کمتر از ۲۴ ساعت) -->
+  <symbol id="icon-stat-person-bag" viewBox="0 0 24 24" fill="none">
+    <circle cx="8.2" cy="5.2" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M5.5 14V10.5C5.5 9.4 6.4 8.5 7.5 8.5H9.5C10.3 8.5 11.1 9 11.4 9.8L12.6 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M6.8 14.5V20.5M9.8 14.5V20.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <path d="M13.5 15.8H20.2L19.4 20.5H14.3L13.5 15.8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+    <path d="M15.4 15.8V14.3C15.4 13.7 15.9 13.3 16.5 13.3H17.2C17.8 13.3 18.3 13.7 18.3 14.3V15.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Hero Stat 2 (Middle): Expand / Max Credit Ceiling (۱۵۰ میلیون تومان) -->
+  <symbol id="icon-stat-expand" viewBox="0 0 24 24" fill="none">
+    <path d="M12.5 5H17.5C18.6 5 19.5 5.9 19.5 7V17.5C19.5 18.6 18.6 19.5 17.5 19.5H7C5.9 19.5 5 18.6 5 17.5V12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M5 5H10.5M5 5V10.5M5 5L12.2 12.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Hero Stat 3 (Leftmost): Online & In-Person Stores (+۳۰۰۰۰) -->
+  <symbol id="icon-stat-stores" viewBox="0 0 24 24" fill="none">
+    <path d="M4.5 16.8V7.8C4.5 6.9 5.2 6.2 6.1 6.2H11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M3 19.5H20.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    <path d="M4.5 16.8H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <rect x="13" y="6.2" width="3.2" height="3.2" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <rect x="13" y="10.8" width="3.2" height="3.2" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <rect x="17.2" y="10.8" width="3.2" height="3.2" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <rect x="17.5" y="4.2" width="3.2" height="3.2" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
+
+  <!-- Card Icon: Shield Check (بدون نیاز به ضامن) -->
+  <symbol id="icon-card-shield-check" viewBox="0 0 24 24" fill="none">
+    <path d="M12 3L4.5 6.2V11.4C4.5 16.2 7.7 20.5 12 21.8C16.3 20.5 19.5 16.2 19.5 11.4V6.2L12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M9 12.2L11.1 14.3L15.2 10.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card Icon: Lightning Bolt (تأیید سریع اعتبار) -->
+  <symbol id="icon-card-bolt" viewBox="0 0 24 24" fill="none">
+    <path d="M13 3L5.5 13.5H12L11 21L18.5 10.5H12L13 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card Icon: Refresh (فرایند کاملاً دیجیتال) -->
+  <symbol id="icon-card-refresh" viewBox="0 0 24 24" fill="none">
+    <path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5V9H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M4 13A8.1 8.1 0 0 0 19.5 15M20 19V15H16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card Icon: Trend Up (بهره‌مندی هم‌زمان از اعتبار و سود صندوق‌ها / شفافیت در شرایط اعتبار) -->
+  <symbol id="icon-card-trend-up" viewBox="0 0 24 24" fill="none">
+    <path d="M3 17L9 11L13 15L21 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M15 7H21V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card Icon: Clock (۲۴/۷ در دسترس / امکان تسویه زودهنگام) -->
+  <symbol id="icon-card-clock" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M12 7.5V12L15 13.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+
+  <!-- Card Icon: Data Panel / Card (افزایش قدرت خرید بدون فروش دارایی / استفاده آسان از اعتبار) -->
+  <symbol id="icon-card-data-panel" viewBox="0 0 24 24" fill="none">
+    <rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M3.5 9.5H20.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path d="M7.5 14H11.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+  </symbol>
+
+  <!-- Partner Logo: Tara (تارا) -->
+  <symbol id="icon-partner-tara" viewBox="0 0 36 36" fill="none">
+    <defs>
+      <linearGradient id="taraGrad" x1="18" y1="0" x2="18" y2="36" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#F0008C" />
+        <stop offset="55%" stop-color="#8B159F" />
+        <stop offset="100%" stop-color="#311B92" />
+      </linearGradient>
+    </defs>
+    <circle cx="18" cy="18" r="18" fill="url(#taraGrad)" />
+    <path d="M15.2 7.5V16.8C15.2 19.3 17 21.1 19.5 21.1C21.8 21.1 23.5 19.4 23.5 17.1V15.4H20.3V16.9C20.3 17.6 19.9 18.1 19.2 18.1C18.5 18.1 18.1 17.6 18.1 16.8V13.6H22.8V10.8H18.1V7.5H15.2Z" fill="#FFFFFF" />
+    <text x="18" y="30.2" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-size="7.5" font-weight="800" letter-spacing="0.3">tara</text>
+  </symbol>
+
+  <!-- Partner Logo: MiniPay (مینی‌پی) -->
+  <symbol id="icon-partner-minipay" viewBox="0 0 36 36" fill="none">
+    <rect x="2" y="2" width="32" height="32" rx="10" fill="currentColor" />
+    <path d="M23.5 21.5H13.5C12.1 21.5 11 20.4 11 19C11 17.6 12.1 16.5 13.5 16.5H19.5C20.6 16.5 21.5 15.6 21.5 14.5C21.5 13.4 20.6 12.5 19.5 12.5H15.5" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+  </symbol>
+</svg>

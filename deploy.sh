@@ -50,6 +50,7 @@ fi
 
 echo "[4/4] Updating only changed containers (zero downtime for unchanged services)..."
 docker compose up -d --remove-orphans
+docker compose exec -T gateway nginx -s reload 2>/dev/null || true
 
 echo ""
 echo "================================================================"

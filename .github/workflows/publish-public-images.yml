@@ -98,6 +98,7 @@ jobs:
               IBSHOP_RELEASE_DATE=${RELEASE_DATE}
           COPY artifacts/api/ ./
           COPY ["artifacts/snapshots/", "./docs/newest docs/ibshop_10_products_req_resp/"]
+          RUN mkdir -p /app/wwwroot/uploads
           EXPOSE 8080
           ENTRYPOINT ["dotnet", "iBshop.Api.dll"]
           EOF
